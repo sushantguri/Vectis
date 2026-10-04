@@ -1,0 +1,36 @@
+# Managed by vectis -- do not edit by hand, re-run `vectis setup` instead.
+#
+# Open-source nginx has no active health checks (that's nginx-plus
+# only) -- failover here is passive, via max_fails/fail_timeout plus
+# proxy_next_upstream.
+upstream {{ domain_slug }}_backends {
+    # least_conn, not round robin (nginx's default with no directive):
+    # the main time these two actually differ is right after a
+    # fault-injected restart, when one backend has just come back up
+    # and shouldn't immediately receive an equal share of traffic
+    # while it's still warming up. least_conn naturally sends fewer
+    # requests to whichever backend currently has more open
+    # connections, so a freshly-recovered backend catches up gradually
+    # instead of getting hit at full share the moment nginx notices
+    # it's alive again. For two backends doing similarly-cheap,
+    # similarly-fast work, plain round robin would also be a
+    # reasonable, simpler choice -- delete the line below to get it.
+    least_conn;
+    server {{ backend_a_ip }}:3001 max_fails=2 fail_timeout=10s;
+    server {{ backend_b_ip }}:3002 max_fails=2 fail_timeout=10s;
+}
+
+server {
+    listen {{ https_port }} ssl;
+    server_name {{ domain }} api.{{ domain }};
+
+    ssl_certificate     {{ cert_path }};
+    ssl_certificate_key {{ key_path }};
+
+    location / {
+        proxy_pass http://{{ domain_slug }}_backends;
+        proxy_next_upstream error timeout http_502 http_503 http_504;
+        proxy_set_header Host $host;
+        # backend response headers (including X-Backend) pass through by default
+    }
+}

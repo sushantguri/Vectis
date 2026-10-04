@@ -1,0 +1,8 @@
+# Managed by vectis -- do not edit by hand, re-run `vectis setup` instead.
+address=/{{ domain }}/{{ edge_ip }}
+address=/api.{{ domain }}/{{ edge_ip }}
+{% if hosted_ip %}
+address=/hosted.{{ domain }}/{{ hosted_ip }}
+{% endif %}
+log-queries
+log-facility={{ log_path }}
