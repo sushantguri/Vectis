@@ -1,0 +1,19 @@
+[project]
+name = "vectis"
+version = "0.1.0"
+description = "Role-based orchestration CLI for deploying and operating a private DNS, load-balanced edge, and backend network"
+requires-python = ">=3.11"
+dependencies = [
+    "typer>=0.12",
+    "questionary>=2.0",
+    "rich>=13.7",
+    "jinja2>=3.1",
+    "flask>=3.0",
+]
+
+[project.scripts]
+vectis = "vectis.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
