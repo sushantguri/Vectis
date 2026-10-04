@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vectis Network Nexus</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #050b14;
+            --accent-1: #00f2fe;
+            --accent-2: #4facfe;
+            --accent-3: #f093fb;
+            --accent-4: #f5576c;
+            --glass-bg: rgba(13, 22, 38, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --terminal-bg: rgba(0, 0, 0, 0.4);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--bg-primary);
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* Animated Mesh Gradient Background */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, rgba(79, 172, 254, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(240, 147, 251, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.15) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, rgba(245, 87, 108, 0.15) 0px, transparent 50%);
+            animation: breathe 10s ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            min-height: calc(100vh - 8rem);
+            perspective: 1000px;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--text-main) 0%, var(--text-dim) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            text-shadow: 0 0 40px rgba(255,255,255,0.1);
+        }
+
+        /* 3D Glassmorphism Card */
+        .nexus-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 2rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 
+                0 30px 60px -20px rgba(0,0,0,0.8),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nexus-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-20deg);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .nexus-card:hover {
+            transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
+            box-shadow: 
+                0 40px 80px -20px rgba(0,0,0,0.9),
+                0 0 40px rgba(0, 242, 254, 0.2),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        /* Mac-like Window Controls */
+        .window-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+            margin-right: 1.5rem;
+        }
+
+        .light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .light.red { background-color: #ff5f56; }
+        .light.yellow { background-color: #ffbd2e; }
+        .light.green { background-color: #27c93f; }
+
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Modern Terminal Area */
+        .terminal {
+            background: var(--terminal-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-dim);
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+            border: 1px solid rgba(0, 0, 0, 0.5);
+        }
+
+        .terminal-glow {
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, var(--accent-1), var(--accent-3), var(--accent-2));
+            z-index: -1;
+            border-radius: 1.1rem;
+            opacity: 0.3;
+            filter: blur(8px);
+            animation: pulseGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Typography & Colors in Terminal */
+        .cmd { color: #fff; font-weight: 600; }
+        .prompt { color: var(--accent-3); margin-right: 0.8rem; font-weight: 600; }
+        .param { color: var(--accent-1); text-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+        .success { color: var(--success); text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        .system { color: var(--accent-2); }
+        
+        .line {
+            display: flex;
+            margin-bottom: 0.4rem;
+            opacity: 0;
+            animation: revealLine 0.1s forwards;
+        }
+
+        @keyframes revealLine {
+            to { opacity: 1; }
+        }
+
+        /* Dynamic Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            opacity: 0;
+            animation: fadeUp 1s 3s forwards cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .status-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .status-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .status-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #fff;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .stat-value.active {
+            color: var(--success);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+
+    <div class="container">
+        <h1 class="hero-title">Vectis Network Engine</h1>
+        
+        <div class="nexus-card">
+            <div class="window-header">
+                <div class="traffic-lights">
+                    <div class="light red"></div>
+                    <div class="light yellow"></div>
+                    <div class="light green"></div>
+                </div>
+                <div class="header-title">Deployment Stream</div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-glow"></div>
+                
+                <div class="line" style="animation-delay: 0.2s">
+                    <span class="prompt">➜</span>
+                    <span class="cmd">vectis setup --role-name "DNS server"</span>
+                </div>
+                
+                <div class="line" style="animation-delay: 0.8s">
+                    <span class="system">?</span>&nbsp;Team domain (e.g. team1.test):&nbsp;<span class="param">test.com</span>
+                </div>
+                
+                <div class="line" style="animation-delay: 1.4s">
+                    <span class="system">?</span>&nbsp;Detected en0: 10.7.6.87 (36:f9:b0:e2:18:ed) -- use this?&nbsp;<span class="param">Yes</span>
+                </div>
+
+                <div class="line" style="animation-delay: 2.0s; margin-top: 1rem;">
+                    <span class="cmd">Initializing Node configuration...</span>
+                </div>
+                
+                <div class="line" style="animation-delay: 2.2s; padding-left: 1.5rem;">
+                    This machine: <span class="cmd">10.7.6.87 (36:f9:b0:e2:18:ed)</span>
+                </div>
+                
+                <div class="line" style="animation-delay: 2.3s; padding-left: 1.5rem; margin-bottom: 1rem;">
+                    Share it with: <span class="cmd">every other machine</span>
+                </div>
+
+                <div class="line" style="animation-delay: 2.6s">
+                    <span class="system">⚡</span>&nbsp;<span class="cmd">Validating subsystem dependencies...</span>
+                </div>
+                
+                <div class="line" style="animation-delay: 2.8s; padding-left: 1.5rem;">
+                    [<span class="success">PASS</span>] dnsmasq verification complete
+                </div>
+                
+                <div class="line" style="animation-delay: 3.2s">
+                    <span class="system">?</span>&nbsp;Load Balancer / Edge machine's IP address:&nbsp;<span class="param">10.7.5.62</span>
+                </div>
+
+                <div class="line" style="animation-delay: 3.8s; margin-top: 1rem;">
+                    <span class="system">⟳</span>&nbsp;<span class="cmd">Rebooting core DNS resolver services (Root Privileges Required)...</span>
+                </div>
+
+                <div class="line" style="animation-delay: 4.5s">
+                    <span class="success">✔ System override active: dnsmasq restarted instantly via launchctl</span>
+                </div>
+            </div>
+
+            <div class="status-grid">
+                <div class="status-card">
+                    <span class="stat-label">Network Role</span>
+                    <span class="stat-value">DNS_SERVER</span>
+                </div>
+                <div class="status-card">
+                    <span class="stat-label">Active Domain</span>
+                    <span class="stat-value param">test.com</span>
+                </div>
+                <div class="status-card">
+                    <span class="stat-label">System Status</span>
+                    <span class="stat-value active">ONLINE</span>
+                </div>
+                <div class="status-card">
+                    <span class="stat-label">Connection</span>
+                    <span class="stat-value" style="color: var(--accent-3);">SECURE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
